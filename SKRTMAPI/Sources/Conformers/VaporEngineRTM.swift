@@ -23,8 +23,8 @@
 
 #if os(Linux) || os(macOS) && !COCOAPODS
 import Foundation
-import HTTP
-import WebSocket
+import NIO
+import WebSocketKit
 
 // Builds with *Swift Package Manager ONLY*
 public class VaporEngineRTM: RTMWebSocket {
@@ -34,23 +34,13 @@ public class VaporEngineRTM: RTMWebSocket {
     public weak var delegate: RTMDelegate?
     // Websocket
     private var websocket: WebSocket?
-    private var futureWebsocket: Future<WebSocket>?
 
     public required init() {}
 
     public func connect(url: URL) {
-        guard let host = url.host else {
-            fatalError("ERROR - Cannot extract host from '\(url.absoluteString)'")
+        _ = WebSocket.connect(to: url, on: eventLoopGroup) { socket in
+            self.didConnect(websocket: socket)
         }
-        
-        let scheme: HTTPScheme = url.scheme == "wss" ? .wss : .ws
-        futureWebsocket = HTTPClient.webSocket(
-            scheme: scheme,
-            hostname: host,
-            path: url.path,
-            on: eventLoopGroup
-        )
-        .do(didConnect)
     }
 
     func didConnect(websocket: WebSocket) {
@@ -61,20 +51,14 @@ public class VaporEngineRTM: RTMWebSocket {
         websocket.onText { ws, text in
             self.delegate?.receivedMessage(text)
         }
-
-        websocket.onError { ws, error in
-
-        }
-
-        websocket.onCloseCode { closeCode in
+        _ = websocket.onClose.always { _ in
             self.delegate?.disconnected()
         }
     }
 
     public func disconnect() {
-        websocket?.close()
+        _ = websocket?.close()
         websocket = nil
-        futureWebsocket = nil
     }
 
     public func sendMessage(_ message: String) throws {

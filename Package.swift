@@ -23,13 +23,13 @@ SKRTMAPI.dependencies = [
     "SKCore",
     "SKWebAPI",
     "Starscream",
-    "WebSocket"
+    "WebSocketKit"
 ]
 #elseif os(Linux)
 SKRTMAPI.dependencies = [
     "SKCore",
     "SKWebAPI",
-    "WebSocket"
+    "WebSocketKit"
 ]
 #elseif os(iOS) || os(tvOS)
 SKRTMAPI.dependencies = [
@@ -70,13 +70,13 @@ let package = Package(
 #if os(macOS)
 package.dependencies = [
     .package(url: "https://github.com/httpswift/swifter.git", .upToNextMinor(from: "1.4.6")),
-    .package(url: "https://github.com/vapor/websocket", .upToNextMinor(from: "1.1.2")),
+    .package(url: "https://github.com/vapor/websocket", .upToNextMinor(from: "2.1.1")),
     .package(url: "https://github.com/daltoniam/Starscream", .upToNextMinor(from: "3.1.0"))
 ]
 #elseif os(Linux)
 package.dependencies = [
     .package(url: "https://github.com/httpswift/swifter.git", .upToNextMinor(from: "1.4.6")),
-    .package(url: "https://github.com/vapor/websocket", .upToNextMinor(from: "1.1.2"))
+    .package(url: "https://github.com/vapor/websocket", .upToNextMinor(from: "2.1.1"))
 ]
 #elseif os(iOS) || os(tvOS)
 package.dependencies = [
